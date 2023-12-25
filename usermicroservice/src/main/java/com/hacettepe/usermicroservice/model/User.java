@@ -2,6 +2,7 @@ package com.hacettepe.usermicroservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.lang.NonNull;
 
 @Data
 @Entity
@@ -18,6 +19,10 @@ public class User {
     @NonNull
     @Column(name = "name")
     private String name;
+
+    @NonNull
+    @Column(name = "email", unique = true)
+    private String email;
 
     @NonNull
     @Column(name = "password")
