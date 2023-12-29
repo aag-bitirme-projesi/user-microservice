@@ -24,7 +24,7 @@ public class Order {
     private LocalDate orderDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "_user")
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
