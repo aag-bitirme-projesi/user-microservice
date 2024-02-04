@@ -1,5 +1,6 @@
 package com.hacettepe.usermicroservice.service;
 
+import com.hacettepe.usermicroservice.exception.EmailSendingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    public void sendPasswordResetEmail(String to, String subject, String text) {
+    public void sendPasswordResetEmail(String to, String subject, String text) throws EmailSendingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
@@ -29,7 +30,7 @@ public class EmailService {
 
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            // TODO IMPLEMENT ERROR
+            throw  new EmailSendingException("Error sending password reset email", e);
         }
     }
 }

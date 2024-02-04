@@ -1,5 +1,7 @@
 package com.hacettepe.usermicroservice.service;
 
+import com.hacettepe.usermicroservice.exception.EmailSendingException;
+import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.PasswordResetToken;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.PasswordResetTokenRepository;
@@ -25,12 +27,11 @@ public class PasswordResetTokenService {
     @Autowired
     private EmailService emailService;
 
-    public String createToken(String email) throws Exception {
+    public String createToken(String email) throws UserNotFoundException, EmailSendingException {
 
         User user = userService.findByEmail(email).orElse(null);
         if (user == null) {
-            // TODO USER NOT FOUND
-            throw new Exception();
+            throw new UserNotFoundException("User with email " + email + " not found");
         }
         String token = UUID.randomUUID().toString();
         Date expiryDate = calculateExpiryDate();
@@ -53,7 +54,7 @@ public class PasswordResetTokenService {
         return calendar.getTime();
     }
 
-    private void sendPasswordResetEmail(User user, String token) {
+    private void sendPasswordResetEmail(User user, String token) throws EmailSendingException {
         String userEmail = user.getEmail();
         String subject = "Password Reset Request";
         String resetLink = "http://localhost:8080/resetPassword/" + token;

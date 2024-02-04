@@ -1,5 +1,7 @@
 package com.hacettepe.usermicroservice.controller;
 
+import com.hacettepe.usermicroservice.exception.EmailSendingException;
+import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.PasswordResetToken;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.service.PasswordResetTokenService;
@@ -22,19 +24,12 @@ public class UserController {
         try {
             String token = passwordResetTokenService.createToken(email);
             return ResponseEntity.ok("Password reset email sent successfully. Check your email.");
-        } catch (Exception e) {
+        } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body("User not found.");
+        } catch (EmailSendingException e) {
+            return ResponseEntity.badRequest().body("Error sending password reset email.");
         }
     }
-
-    /*
-    @GetMapping("/validateToken/{token}")
-    public ResponseEntity<?> validateToken(@PathVariable String token) {
-        if (passwordResetTokenService.validatePasswordResetToken(token))
-            return ResponseEntity.ok("Token is valid.");
-        return ResponseEntity.badRequest().body("Token is invalid.");
-    }
-    */
 
     @PostMapping("/resetPassword/{token}")
     public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestParam("newPassword") String newPassword) {
