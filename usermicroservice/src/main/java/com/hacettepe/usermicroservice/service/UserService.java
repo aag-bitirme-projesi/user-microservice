@@ -20,6 +20,9 @@ public class UserService {
     @Autowired
     private PaymentInfoRepository paymentInfoRepository;
 
+    @Autowired
+    private StorageService storageService;
+
     public Optional<User> findByUsername(String username) {
         return userRepository.findById(username);
     }
@@ -43,9 +46,9 @@ public class UserService {
             user.setPassword(new_user.getPassword());
         }
 
-        // TODO UPDATE CV
         if (new_user.getCv() != null) {
-            user.setCv(new_user.getCv());
+            String pdfUrl = storageService.uploadCv(new_user.getCv());
+            user.setCv(pdfUrl);
         }
 
         if (new_user.getGithub() != null) {

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +16,7 @@ public class UserUpdateDTO {
     private String email;
     private String oldPassword;
     private String password;
-    private String cv;
+    private MultipartFile cv;
     private String github;
     private PaymentInfoDTO paymentInfo;
 }

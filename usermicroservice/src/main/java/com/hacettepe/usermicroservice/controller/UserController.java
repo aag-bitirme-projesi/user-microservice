@@ -19,6 +19,11 @@ public class UserController {
     @Autowired
     private  PasswordResetTokenService passwordResetTokenService;
 
+    @GetMapping("/testingServer")
+    public ResponseEntity<?> testingServer() {
+        return ResponseEntity.ok("Working fine...");
+    }
+
     @PostMapping("/forgotPassword")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
         try {
