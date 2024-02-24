@@ -1,47 +1,41 @@
 package com.hacettepe.usermicroservice.controller;
 
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
-import com.hacettepe.usermicroservice.model.User;
-import com.hacettepe.usermicroservice.service.IUserService;
-import com.hacettepe.usermicroservice.utils.EmailClient;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.hacettepe.usermicroservice.exception.EmailSendingException;
+import com.hacettepe.usermicroservice.service.PasswordResetTokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.UUID;
 
 @RestController
 //@Secured(SecurityUtils.ROLE_USER)
 @RequestMapping("api/user")
 @RequiredArgsConstructor
 public class UserController {
-    private final IUserService userService;
-    private final EmailClient emailClient;
 
-    @GetMapping("/hello")
-    public ResponseEntity<String> sayHello() {
-        return ResponseEntity.ok("hello world!");
-    }
+    @Autowired
+    private  PasswordResetTokenService passwordResetTokenService;
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(HttpServletRequest request,
-                                                @RequestParam("email") String userEmail) {
-        User user = userService.findUserByEmail(userEmail);
-
-        if (user == null) {
-            throw new UserNotFoundException("Email not found.");
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
+        try {
+            String token = passwordResetTokenService.createToken(email);
+            return ResponseEntity.ok("Password reset email sent successfully. Check your email.");
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.badRequest().body("User not found.");
+        } catch (EmailSendingException e) {
+            return ResponseEntity.badRequest().body("Error sending password reset email.");
         }
-
-        String token = UUID.randomUUID().toString();
-        //userService.createPasswordResetToken(user, token);
-
-        emailClient.constructEmail(getAppUrl(request), token, userEmail);
-
-        return ResponseEntity.ok("reset email is sent.");  // link is a url for changing password (ataberk)
     }
 
-    private String getAppUrl(HttpServletRequest request) {
-        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    @PostMapping("/resetPassword/{token}")
+    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestParam("newPassword") String newPassword) {
+        if (!passwordResetTokenService.validatePasswordResetToken(token))
+            return ResponseEntity.badRequest().body("Token is invalid.");
+
+        passwordResetTokenService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Password reset successfully");
     }
 }

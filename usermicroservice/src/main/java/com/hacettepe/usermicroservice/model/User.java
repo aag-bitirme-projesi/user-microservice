@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import org.springframework.lang.NonNull;
 
 @Data
 @Entity
@@ -27,7 +28,7 @@ public class User implements UserDetails {
     private String name;
 
     @NonNull
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @NonNull

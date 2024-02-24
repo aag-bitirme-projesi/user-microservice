@@ -1,12 +1,15 @@
 package com.hacettepe.usermicroservice.service;
 
-import com.hacettepe.usermicroservice.auth.PasswordResetToken;
+import com.hacettepe.usermicroservice.dto.UserUpdateDTO;
+import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 public interface IUserService {
-    User findUserByEmail(String email);
+    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 
-//    void createPasswordResetToken(User user, String token);
+    User updateUser(UserUpdateDTO new_user) throws UserNotFoundException;
+
 }

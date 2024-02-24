@@ -28,11 +28,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(authService.signIn(request));
     }
 
-    @GetMapping("/oauth2/")
-    public ResponseEntity<String> googleSignIn(@AuthenticationPrincipal OAuth2User principal) {
-        // Process user information and customize your logic
-        String email = principal.getAttribute("email");
-        String name = principal.getAttribute("name");
-        return ResponseEntity.ok("redirect:/");
-    }
+//    @GetMapping("/oauth2/")
+//    public ResponseEntity<String> googleSignIn(@AuthenticationPrincipal OAuth2User principal) {
+//        // Process user information and customize your logic
+//        String email = principal.getAttribute("email");
+//        String name = principal.getAttribute("name");
+//        return ResponseEntity.ok("redirect:/");
+//    }
 }
