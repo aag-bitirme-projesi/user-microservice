@@ -31,8 +31,6 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:3.2.2'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.1'
     implementation 'com.github.supabase-community:storage-java:V1.1.0'
     compileOnly 'org.projectlombok:lombok'

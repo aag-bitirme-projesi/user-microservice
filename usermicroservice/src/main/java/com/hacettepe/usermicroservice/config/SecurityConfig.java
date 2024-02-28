@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,7 +24,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    //private final LogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,7 +31,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/api/user/reset-password/**").permitAll()
                         .anyRequest().authenticated())
-                .oauth2Login(withDefaults())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -40,8 +39,7 @@ public class SecurityConfig {
                             .clearAuthentication(true)
                             .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                             .logoutSuccessUrl("/login?logout")
-                            //.addLogoutHandler(logoutHandler)
-                            //.logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                            .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                             .permitAll();
                 });
 

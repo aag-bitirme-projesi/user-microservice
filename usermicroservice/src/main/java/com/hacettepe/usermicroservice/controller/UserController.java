@@ -18,6 +18,11 @@ public class UserController {
     @Autowired
     private  PasswordResetTokenService passwordResetTokenService;
 
+    @GetMapping("/home")
+    public ResponseEntity<String> securedHome() {
+        return ResponseEntity.ok("secured endpoint home");
+    }
+
     @PostMapping("/forgotPassword")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
         try {
