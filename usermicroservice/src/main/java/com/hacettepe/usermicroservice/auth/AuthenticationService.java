@@ -1,6 +1,8 @@
 package com.hacettepe.usermicroservice.auth;
 
 import com.hacettepe.usermicroservice.config.JwtService;
+import com.hacettepe.usermicroservice.exception.EmailUsedException;
+import com.hacettepe.usermicroservice.exception.UserExistsException;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.IUserRepository;
 import com.hacettepe.usermicroservice.utils.Role;
@@ -9,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +21,19 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
 
-    public AuthenticationResponse signUp(SignUpRequest request) {
+    @ExceptionHandler({UserExistsException.class, EmailUsedException.class})
+    public AuthenticationResponse signUp(SignUpRequest request) throws UserExistsException, EmailUsedException {
+        boolean emailExists = userRepository.findByEmail(request.getEmail()).isPresent();
+        boolean usernameExists = userRepository.findByUsername(request.getUsername()).isPresent();
+
+        if(usernameExists) {
+            throw new UserExistsException("This username has been used.");
+        }
+
+        if(emailExists) {
+            throw new EmailUsedException("This email has been used.");
+        }
+
         var user = User.builder()
                 .username(request.getUsername())
                 .name(request.getName())
