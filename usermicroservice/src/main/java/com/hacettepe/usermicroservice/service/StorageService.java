@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class StorageService {
+public class StorageService implements IStorageService {
     @Value("${supabase.url}")
     private String supabaseUrl;
 

@@ -5,7 +5,9 @@ import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.PasswordResetToken;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.IPasswordResetTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hacettepe.usermicroservice.repository.IUserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -13,20 +15,18 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-public class PasswordResetTokenService {
+@RequiredArgsConstructor
+public class PasswordResetTokenService implements IPasswordResetTokenService {
 
-    @Autowired
-    private IPasswordResetTokenRepository passwordResetTokenRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private EmailService emailService;
+    private final IUserRepository userRepository;
+    private final IPasswordResetTokenRepository passwordResetTokenRepository;
+    private final IUserService userService;
+    private final IEmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     public String createToken(String email) throws UserNotFoundException, EmailSendingException {
 
-        User user = userService.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with email " + email + " not found");
         }
@@ -69,9 +69,9 @@ public class PasswordResetTokenService {
             return;
 
         User user = passwordResetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
 
-        // TODO UPDATE PASSWORD
-
+        userRepository.save(user);
         passwordResetTokenRepository.delete(passwordResetToken);
     }
 

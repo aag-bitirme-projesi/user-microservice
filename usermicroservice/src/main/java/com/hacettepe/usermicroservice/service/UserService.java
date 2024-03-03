@@ -4,11 +4,13 @@ import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.IPaymentInfoRepository;
 import com.hacettepe.usermicroservice.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.hacettepe.usermicroservice.dto.PaymentInfoDTO;
 import com.hacettepe.usermicroservice.dto.UserUpdateDTO;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.PaymentInfo;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Optional;
 
@@ -17,16 +19,10 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final IPaymentInfoRepository paymentInfoRepository;
-    private final StorageService storageService;
+    private final IStorageService storageService;
+    private final PasswordEncoder passwordEncoder;
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findById(username);
-    }
-
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
+    @ExceptionHandler({UserNotFoundException.class})
     public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException {
         User user = userRepository.findById(new_user.getUsername()).orElse(null);
         if (user == null) {
@@ -37,9 +33,8 @@ public class UserService implements IUserService {
             user.setEmail(new_user.getEmail());
         }
 
-        // TODO UPDATE PASSWORD
         if (new_user.getPassword() != null) {
-            user.setPassword(new_user.getPassword());
+            user.setPassword(passwordEncoder.encode(new_user.getPassword()));
         }
 
         if (new_user.getCv() != null) {

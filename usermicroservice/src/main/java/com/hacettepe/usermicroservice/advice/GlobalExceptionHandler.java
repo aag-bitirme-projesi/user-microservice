@@ -1,5 +1,6 @@
 package com.hacettepe.usermicroservice.advice;
 
+import com.hacettepe.usermicroservice.exception.EmailSendingException;
 import com.hacettepe.usermicroservice.exception.EmailUsedException;
 import com.hacettepe.usermicroservice.exception.UserExistsException;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
@@ -25,6 +26,12 @@ public class GlobalExceptionHandler
 
     @ExceptionHandler(EmailUsedException.class)
     public ResponseEntity<String> handleQueryOutOfRangeException(EmailUsedException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<String> handleQueryOutOfRangeException(EmailSendingException ex) {
         String errorMessage = ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
