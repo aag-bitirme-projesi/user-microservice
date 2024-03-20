@@ -41,4 +41,7 @@ public class PaymentInfo {
 
     @Column(name = "card_name")
     private String cardName;
+
+    @Column(name = "stripe_token")
+    private String stripeToken;
 }

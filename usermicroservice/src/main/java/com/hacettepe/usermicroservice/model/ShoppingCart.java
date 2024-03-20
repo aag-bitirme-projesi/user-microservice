@@ -6,25 +6,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "models")
+@Table(name = "shopping_cart")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Model {
+public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "model_link")
-    private String modelLink;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username")
+    private User user;
 
-    @Column(name = "model_name")
-    private String name;
-
-    @Column(name = "price")
-    private double price;
+    @OneToMany
+    @Column(name =  "models")
+    private List<Model> models;
 }
