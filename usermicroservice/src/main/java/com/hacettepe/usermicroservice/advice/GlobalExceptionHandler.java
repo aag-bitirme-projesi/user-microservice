@@ -1,6 +1,7 @@
 package com.hacettepe.usermicroservice.advice;
 
 import com.hacettepe.usermicroservice.exception.EmailUsedException;
+import com.hacettepe.usermicroservice.exception.UnableToPayException;
 import com.hacettepe.usermicroservice.exception.UserExistsException;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,12 @@ public class GlobalExceptionHandler
 
     @ExceptionHandler(EmailUsedException.class)
     public ResponseEntity<String> handleQueryOutOfRangeException(EmailUsedException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnableToPayException.class)
+    public ResponseEntity<String> handleUnableToPayException(UnableToPayException ex) {
         String errorMessage = ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }

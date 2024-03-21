@@ -1,4 +1,4 @@
 package com.hacettepe.usermicroservice.service;
 
-public interface IModelService { //todo
+public interface IModelService {
 }

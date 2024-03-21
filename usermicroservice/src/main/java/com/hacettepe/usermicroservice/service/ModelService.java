@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ModelService implements IModelService { //todo
+public class ModelService implements IModelService {
     private final IModelRepository modelRepository;
 
 }

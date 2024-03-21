@@ -1,4 +1,9 @@
 package com.hacettepe.usermicroservice.service;
 
-public interface IPaymentService { //todo
+import com.hacettepe.usermicroservice.dto.PaymentInfoDTO;
+import com.hacettepe.usermicroservice.model.PaymentInfo;
+
+public interface IPaymentService {
+    PaymentInfo addNewPaymentMethod(PaymentInfoDTO newPayment, boolean saveOrNot);
+    PaymentInfo choosePaymentMethod(long paymentId);
 }

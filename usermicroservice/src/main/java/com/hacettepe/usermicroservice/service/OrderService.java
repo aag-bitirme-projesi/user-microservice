@@ -4,6 +4,7 @@ import com.hacettepe.usermicroservice.dto.PaymentInfoDTO;
 import com.hacettepe.usermicroservice.dto.StripeChargeDto;
 import com.hacettepe.usermicroservice.dto.StripeTestChargeDto;
 import com.hacettepe.usermicroservice.dto.StripeTokenDto;
+import com.hacettepe.usermicroservice.exception.UnableToPayException;
 import com.hacettepe.usermicroservice.model.Model;
 import com.hacettepe.usermicroservice.model.ShoppingCart;
 import com.hacettepe.usermicroservice.model.User;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
@@ -43,8 +47,8 @@ public class OrderService implements IOrderService{
         return username;
     }
 
-    public ShoppingCart addToShoppingCart(Principal principal, long modelId) {
-        User user = userRepository.findByUsername(principal.getName()).get();
+    public ShoppingCart addToShoppingCart(long modelId) {
+        User user = userRepository.findByUsername(getUsername()).get();
         var shoppingCartExists = shoppingCartRepository.findByUser(user).isPresent();
         ShoppingCart shoppingCart;
 
@@ -81,7 +85,8 @@ public class OrderService implements IOrderService{
                 .sum();
     }
 
-    public void payForOrder(boolean addNewPayment, PaymentInfoDTO paymentInfo, boolean savePayment) {
+    @ExceptionHandler({UnableToPayException.class})
+    public void payForOrder(boolean addNewPayment, PaymentInfoDTO paymentInfo, boolean savePayment) throws UnableToPayException {
         //todo shopping cart boşalt, save payment to db
         double amount = getTotalAmount(getShoppingCart());
 
@@ -95,21 +100,22 @@ public class OrderService implements IOrderService{
             token = paymentInfoRepository.findPaymentInfoByCardNumber(paymentInfo.getCardNumber()).getStripeToken();
         }
 
-        if (addNewPayment || token.isEmpty()) {
-            StripeTokenDto tokenDto = StripeTokenDto.builder()
-                    .cardNumber(paymentInfo.getCardNumber())
-                    .expMonth(paymentInfo.getExpirationMonth())
-                    .expYear(paymentInfo.getExpirationYear())
-                    .cvc(paymentInfo.getCvc())
-                    .build();
+        try {
+            if (addNewPayment || token.isEmpty()) {
+                StripeTokenDto tokenDto = StripeTokenDto.builder()
+                        .cardNumber(paymentInfo.getCardNumber())
+                        .expMonth(paymentInfo.getExpirationMonth())
+                        .expYear(paymentInfo.getExpirationYear())
+                        .cvc(paymentInfo.getCvc())
+                        .build();
 
-            tokenDto = restTemplate.postForObject(CREATE_CARD_TOKEN_URL, tokenDto, StripeTokenDto.class);
+                tokenDto = restTemplate.postForObject(CREATE_CARD_TOKEN_URL, tokenDto, StripeTokenDto.class);
 
-            if (savePayment) {
-                paymentInfoRepository.addStripeToken(paymentInfo.getCardNumber(), tokenDto.getToken());
-            }
+                if (savePayment) {
+                    paymentInfoRepository.addStripeToken(paymentInfo.getCardNumber(), tokenDto.getToken());
+                }
 
-            // we're using test version for now
+                // we're using test version for now
 //            StripeChargeDto chargeDto = StripeChargeDto.builder()
 //                    .token(tokenDto.getToken())
 //                    .amount(amount)
@@ -118,20 +124,17 @@ public class OrderService implements IOrderService{
 //                    .build();
 
 //            chargeDto = restTemplate.postForObject(CHARGE_URL, chargeDto, StripeChargeDto.class);
+            }
+
+            testChargeDto = restTemplate.postForObject(CHARGE_URL, testChargeDto, StripeTestChargeDto.class);
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            String errorMessage = e.getResponseBodyAsString();
+            throw new UnableToPayException(errorMessage);
         }
 
-        testChargeDto = restTemplate.postForObject(CHARGE_URL, testChargeDto, StripeTestChargeDto.class);
     }
 
-    public List<?> getPastOrders(Principal principal) {
-        return orderRepository.findByUser(principal.getName());
+    public List<?> getPastOrders() {
+        return orderRepository.findByUser(getUsername());
     }
-
-//    RestTemplate restTemplate = new RestTemplate();
-//
-//    String url = String.format(CITY_URL, cityName, appid);
-//
-//    CityDto[] cityDtos = restTemplate.getForObject(url, CityDto[].class);
-//
-//    return cityDtos[0];
 }
