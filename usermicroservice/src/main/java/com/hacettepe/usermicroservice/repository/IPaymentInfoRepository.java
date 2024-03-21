@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface IPaymentInfoRepository extends JpaRepository<PaymentInfo, Long> {
-    @Query(value = "UPDATE payment_infos SET stripe_token = :stripeTokens WHERE card_number = :cardnumber", nativeQuery = true)
+    @Query(value = "UPDATE payment_infos SET stripe_token = :stripeTokens WHERE card_number = :cardNumber", nativeQuery = true)
     void addStripeToken(int cardNumber, String stripeToken);
 
     PaymentInfo findPaymentInfoByCardNumber(int cardNumber);
