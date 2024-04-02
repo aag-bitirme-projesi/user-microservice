@@ -33,6 +33,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.1'
     implementation 'com.github.supabase-community:storage-java:V1.1.0'
+    implementation 'com.amazonaws:aws-java-sdk:1.12.671'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'

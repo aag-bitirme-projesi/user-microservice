@@ -12,6 +12,7 @@ import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.PaymentInfo;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -19,11 +20,11 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final IPaymentInfoRepository paymentInfoRepository;
-    private final IStorageService storageService;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
 
     @ExceptionHandler({UserNotFoundException.class})
-    public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException {
+    public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, IOException {
         User user = userRepository.findById(new_user.getUsername()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with username " + new_user.getUsername() + " not found");
@@ -38,8 +39,8 @@ public class UserService implements IUserService {
         }
 
         if (new_user.getCv() != null) {
-            String pdfUrl = storageService.uploadCv(new_user.getCv());
-            user.setCv(pdfUrl);
+            String cv_url = s3Service.uploadCV(user.getUsername(), new_user.getCv());
+            user.setCv(cv_url);
         }
 
         if (new_user.getGithub() != null) {

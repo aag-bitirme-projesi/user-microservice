@@ -54,8 +54,8 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
     private void sendPasswordResetEmail(User user, String token) throws EmailSendingException {
         String userEmail = user.getEmail();
         String subject = "Password Reset Request";
-        String resetLink = "http://localhost:8080/resetPassword/" + token;
-        String emailText = "Dear " + user.getUsername() + ",\n\n"
+        String resetLink = "http://localhost:8080/api/user/reset-password/" + token;
+        String emailText = "Dear " + user.getName() + ",\n\n"
                 + "Please click below link to reset your password.\n"
                 + resetLink + "\n\n"
                 + "If you did not request a reset, you can ignore this email.\n";

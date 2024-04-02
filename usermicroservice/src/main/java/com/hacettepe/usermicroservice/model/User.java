@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "cv")
+    @Column(name = "cv", length = 512)
     private String cv; // as link or filename
 
     @Column(name = "github")
