@@ -19,7 +19,7 @@ public class Model {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "model_link")
+    @Column(name = "model_link", length = 512)
     private String modelLink;
 
     @Column(name = "model_name")

@@ -23,6 +23,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
 
+    @Override
     @ExceptionHandler({UserNotFoundException.class})
     public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, IOException {
         User user = userRepository.findById(new_user.getUsername()).orElse(null);

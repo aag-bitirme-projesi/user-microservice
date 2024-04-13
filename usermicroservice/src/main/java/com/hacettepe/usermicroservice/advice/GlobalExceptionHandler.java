@@ -1,9 +1,6 @@
 package com.hacettepe.usermicroservice.advice;
 
-import com.hacettepe.usermicroservice.exception.EmailSendingException;
-import com.hacettepe.usermicroservice.exception.EmailUsedException;
-import com.hacettepe.usermicroservice.exception.UserExistsException;
-import com.hacettepe.usermicroservice.exception.UserNotFoundException;
+import com.hacettepe.usermicroservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,6 +29,19 @@ public class GlobalExceptionHandler
 
     @ExceptionHandler(EmailSendingException.class)
     public ResponseEntity<String> handleQueryOutOfRangeException(EmailSendingException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ModelNotFoundException.class)
+    public ResponseEntity<String> handleQueryOutOfRangeException(ModelNotFoundException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(SomethingWentWrongException.class)
+    public ResponseEntity<String> handleQueryOutOfRangeException(SomethingWentWrongException ex) {
         String errorMessage = ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
