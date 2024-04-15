@@ -20,11 +20,11 @@ public class ShoppingCart {
     @Column(name = "id")
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username")
     private User user;
 
-    @OneToMany
-    @Column(name =  "models")
-    private List<Model> models;
+//    @OneToMany(fetch = FetchType.LAZY)
+////    @JoinColumn(name = "id")
+//    private List<ShoppingCartModels> models;
 }

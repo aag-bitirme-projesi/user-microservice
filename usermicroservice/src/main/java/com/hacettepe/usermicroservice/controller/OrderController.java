@@ -21,8 +21,9 @@ public class OrderController {
     public IOrderService orderService;
 
     @PutMapping("/add-to-cart")
-    public ResponseEntity<ShoppingCart> addToShoppingCart(@RequestBody Long modelId) {
-        return ResponseEntity.ok(orderService.addToShoppingCart(modelId));
+    public ResponseEntity<String> addToShoppingCart(@RequestBody Long modelId) {
+        orderService.addToShoppingCart(modelId);
+        return ResponseEntity.ok("added to shopping cart");
     }
 
     @GetMapping("/get-cart")
@@ -31,15 +32,26 @@ public class OrderController {
     }
 
     @PostMapping("/pay")
-    public ResponseEntity<?> payForOrder(@RequestBody PayRequestDto payRequestDto) throws UnableToPayException {
+    public ResponseEntity<?> payForOrder() throws UnableToPayException {
         try {
-            orderService.payForOrder(payRequestDto.isAddNewPayment(), payRequestDto.getPaymentInfoDTO(), payRequestDto.isSavePayment());
+            orderService.payForOrder();
             return ResponseEntity.ok("paid.");
         } catch (UnableToPayException ex) {
             return ResponseEntity.status(400)
                                  .body(ex.getMessage());
         }
     }
+
+//    @PostMapping("/pay")
+//    public ResponseEntity<?> payForOrder(@RequestBody PayRequestDto payRequestDto) throws UnableToPayException {
+//        try {
+//            orderService.payForOrder(payRequestDto.isAddNewPayment(), payRequestDto.getPaymentInfoDTO(), payRequestDto.isSavePayment());
+//            return ResponseEntity.ok("paid.");
+//        } catch (UnableToPayException ex) {
+//            return ResponseEntity.status(400)
+//                                 .body(ex.getMessage());
+//        }
+//    }
 
     @GetMapping("/past-orders")
     public ResponseEntity<List<?>> getPastOrders() {

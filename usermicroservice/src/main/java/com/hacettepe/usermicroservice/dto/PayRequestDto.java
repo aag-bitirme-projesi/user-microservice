@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PayRequestDto {
     private boolean addNewPayment;
-    private PaymentInfoDTO paymentInfoDTO = null;
+    private PaymentInfoDTO paymentInfoDTO;
     private boolean savePayment;
 }

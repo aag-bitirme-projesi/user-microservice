@@ -9,9 +9,9 @@ import java.security.Principal;
 import java.util.List;
 
 public interface IOrderService {
-    ShoppingCart addToShoppingCart(long modelId);
+    void addToShoppingCart(long modelId);
     List<Model> getShoppingCart();
     double getTotalAmount(List<Model> modelsList);
-    void payForOrder(boolean addNewPayment, PaymentInfoDTO paymentInfo, boolean savePayment) throws UnableToPayException;
+    void payForOrder() throws UnableToPayException; //boolean addNewPayment, PaymentInfoDTO paymentInfo, boolean savePayment) throws UnableToPayException;
     List<?> getPastOrders();
 }

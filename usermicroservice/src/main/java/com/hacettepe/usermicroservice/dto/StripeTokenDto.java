@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class StripeTokenDto {
-    private int cardNumber;
+    private long cardNumber;
     private int cvc;
     private int expMonth;
     private int expYear;

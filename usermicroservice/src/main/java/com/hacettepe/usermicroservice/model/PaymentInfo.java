@@ -21,7 +21,7 @@ public class PaymentInfo {
 
     @NonNull
     @Column(name = "card_number")
-    private int cardNumber;
+    private long cardNumber;
 
     @NonNull
     @Column(name = "cvc")

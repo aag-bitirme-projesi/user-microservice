@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PaymentInfoDTO {
-    private int cardNumber;
+    private long cardNumber;
     private int cvc;
     private int expirationMonth;
     private int expirationYear;

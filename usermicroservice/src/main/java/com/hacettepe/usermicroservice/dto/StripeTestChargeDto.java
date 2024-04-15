@@ -14,7 +14,7 @@ import java.util.Map;
 @Builder
 public class StripeTestChargeDto {
     private double amount;
-    private Map<String, String> additionalInfo = Map.ofEntries(
-            Map.entry("ID_TAG", "1234567890")
-    );
+    private Map<String, String> additionalInfo;
+    private boolean success;
+    private String token;
 }
