@@ -1,6 +1,5 @@
 package com.hacettepe.usermicroservice.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ModelDTO {
+public class ExecModelDTO {
     private String name;
     private String username;
-    private String dockerImage;
+    private MultipartFile[] files;
 }
