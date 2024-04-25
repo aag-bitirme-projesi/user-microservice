@@ -6,28 +6,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "shopping_cart")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order {
+public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "order_date")
-    private LocalDate orderDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "_user")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "model_id")
-    private Model model;
+//    @OneToMany(fetch = FetchType.LAZY)
+////    @JoinColumn(name = "id")
+//    private List<ShoppingCartModels> models;
 }

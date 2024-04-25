@@ -21,7 +21,7 @@ public class PaymentInfo {
 
     @NonNull
     @Column(name = "card_number")
-    private int cardNumber;
+    private long cardNumber;
 
     @NonNull
     @Column(name = "cvc")
@@ -41,4 +41,7 @@ public class PaymentInfo {
 
     @Column(name = "card_name")
     private String cardName;
+
+    @Column(name = "stripe_token")
+    private String stripeToken;
 }

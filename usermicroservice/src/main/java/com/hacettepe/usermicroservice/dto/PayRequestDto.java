@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentInfoDTO {
-    private long cardNumber;
-    private int cvc;
-    private int expirationMonth;
-    private int expirationYear;
-    private String owner;
-    private String cardName;
+public class PayRequestDto {
+    private boolean addNewPayment;
+    private PaymentInfoDTO paymentInfoDTO;
+    private boolean savePayment;
 }

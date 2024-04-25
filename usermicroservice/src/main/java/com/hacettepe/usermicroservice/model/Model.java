@@ -24,4 +24,7 @@ public class Model {
 
     @Column(name = "model_name")
     private String name;
+
+    @Column(name = "price")
+    private double price;
 }
