@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.hacettepe.usermicroservice.*", "org.springdoc"})
 public class UsermicroserviceApplication {
     @Bean
     public JavaMailSender getJavaMailSender(@Value("${spring.mail.host}") String host,
