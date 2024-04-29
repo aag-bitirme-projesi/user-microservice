@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 //@Secured(SecurityUtils.ROLE_USER)
-@RequestMapping("api/order")
+@RequestMapping("user/order")
 @RequiredArgsConstructor
 public class OrderController {
     @Autowired

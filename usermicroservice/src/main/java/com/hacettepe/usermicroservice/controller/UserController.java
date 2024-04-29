@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 //@Secured(SecurityUtils.ROLE_USER)
-@RequestMapping("api/user")
+@RequestMapping("user/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -45,9 +45,9 @@ public class UserController {
     }
 
     @PostMapping("/forget-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> emailMap) {
+    public ResponseEntity<?> forgotPassword(@RequestBody String email) {
         try {
-            String token = passwordResetTokenService.createToken(emailMap.get("email"));
+            String token = passwordResetTokenService.createToken(email);
             return ResponseEntity.ok("Password reset email sent successfully. Check your email.");
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body("User not found.");

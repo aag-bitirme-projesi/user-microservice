@@ -62,7 +62,7 @@ public class OrderService implements IOrderService{
             shoppingCartRepository.save(shoppingCart);
         }
 
-        var model = modelRepository.findById(Long.toString(modelId)).get();
+        var model = modelRepository.findById(modelId);
         shoppingCart = shoppingCartRepository.findByUser(user);
 
         var addToCart = ShoppingCartModels.builder()
