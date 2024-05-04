@@ -1,5 +1,7 @@
 package com.hacettepe.usermicroservice.service;
 
+import com.hacettepe.usermicroservice.dto.UserInfoDto;
+import com.hacettepe.usermicroservice.exception.PasswordMatchException;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.IPaymentInfoRepository;
 import com.hacettepe.usermicroservice.repository.IUserRepository;
@@ -13,7 +15,6 @@ import com.hacettepe.usermicroservice.model.PaymentInfo;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,26 @@ public class UserService implements IUserService {
 
     @Override
     @ExceptionHandler({UserNotFoundException.class})
-    public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, IOException {
+    public UserInfoDto getUser(String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException("User with email " + email + " not found");
+        }
+
+        String username = user.getUsername();
+        return UserInfoDto.builder()
+                .username(username)
+                .email(user.getEmail())
+                .profilePicture(s3Service.getProfilePicture(username))
+                .cv(s3Service.getCV(username))
+                .github(user.getGithub())
+                .paymentInfo(getPaymentInfoDto(user))
+                .build();
+    }
+
+    @Override
+    @ExceptionHandler({UserNotFoundException.class})
+    public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, PasswordMatchException, IOException {
         User user = userRepository.findById(new_user.getUsername()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with username " + new_user.getUsername() + " not found");
@@ -36,12 +56,17 @@ public class UserService implements IUserService {
         }
 
         if (new_user.getPassword() != null) {
+            if (!passwordEncoder.matches(new_user.getOldPassword(), user.getPassword()))
+                throw new PasswordMatchException("Old password doesn't match");
             user.setPassword(passwordEncoder.encode(new_user.getPassword()));
         }
 
+        if (new_user.getProfilePicture() != null) {
+            s3Service.uploadProfilePicture(user.getUsername(), new_user.getProfilePicture());
+        }
+
         if (new_user.getCv() != null) {
-            String cv_url = s3Service.uploadCV(user.getUsername(), new_user.getCv());
-            user.setCv(cv_url);
+            s3Service.uploadCV(user.getUsername(), new_user.getCv());
         }
 
         if (new_user.getGithub() != null) {
@@ -54,6 +79,19 @@ public class UserService implements IUserService {
         }
 
         return userRepository.save(user);
+    }
+
+    private PaymentInfoDTO getPaymentInfoDto(User user) {
+        PaymentInfo paymentInfo = user.getPaymentInfo();
+
+        return PaymentInfoDTO.builder()
+                .cardNumber(paymentInfo.getCardNumber())
+                .cvc(paymentInfo.getCvc())
+                .expirationMonth(paymentInfo.getExpirationMonth())
+                .expirationYear(paymentInfo.getExpirationYear())
+                .owner(paymentInfo.getOwner())
+                .cardName(paymentInfo.getCardName())
+                .build();
     }
 
     private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
