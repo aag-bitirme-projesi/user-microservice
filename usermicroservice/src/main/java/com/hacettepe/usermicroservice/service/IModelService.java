@@ -11,13 +11,10 @@ import java.util.List;
 
 public interface IModelService {
 
-    public Model uploadModel(ModelDTO model) throws IOException;
+    List<Model> listModels();
 
-    public List<Model> listModels();
+    Model getModelById(long modelId);
 
-    public void removeModel(ModelDTO modelDTO) throws UserNotFoundException, ModelNotFoundException, SomethingWentWrongException;
+    List<Model> getBoughtModels();
 
-    public void trainModel();
-
-    void runModel(ModelDTO modelDTO) throws ModelNotFoundException;
 }
