@@ -6,28 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Entity
-@Table(name = "models")
+@Table(name = "model_photos")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Model {
+public class ModelPhotos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "model_link", length = 512)
-    private String modelLink;
-
-    @Column(name = "model_name")
-    private String name;
-
-    @Column(name = "price")
-    private double price;
-
-    @Column(name = "description")
-    private String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id")
+    private Model model;
 }

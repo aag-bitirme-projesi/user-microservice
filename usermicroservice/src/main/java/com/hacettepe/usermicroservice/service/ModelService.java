@@ -48,7 +48,7 @@ public class ModelService implements IModelService {
     }
 
     public Model getModelById(long modelId) {
-        return modelRepository.findById(modelId);
+        return modelRepository.findById(modelId).get();
     }
 
     public List<Model> getBoughtModels() {

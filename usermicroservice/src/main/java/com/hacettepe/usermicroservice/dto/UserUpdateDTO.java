@@ -19,4 +19,5 @@ public class UserUpdateDTO {
     private MultipartFile cv;
     private String github;
     private PaymentInfoDTO paymentInfo;
+    private MultipartFile profilePhoto;
 }
