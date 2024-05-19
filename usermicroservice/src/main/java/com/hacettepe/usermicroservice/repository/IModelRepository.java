@@ -10,4 +10,5 @@ public interface IModelRepository extends JpaRepository<Model, Long> {
 
     Optional<Model> findByName(String name);
 
+    Optional<Model> findById(long id);
 }

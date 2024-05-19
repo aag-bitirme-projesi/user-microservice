@@ -45,6 +45,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "payment_info")
     private PaymentInfo paymentInfo;
 
+    @Column(name = "profile_photo")
+    private String profilePhoto;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

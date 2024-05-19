@@ -53,6 +53,11 @@ public class UserService implements IUserService {
             user.setPaymentInfo(newPaymentInfo);
         }
 
+        if(new_user.getProfilePhoto() != null) {
+            String pp_url = s3Service.uploadProfilePhoto(user.getUsername(), new_user.getProfilePhoto());
+            user.setProfilePhoto(pp_url);
+        }
+
         return userRepository.save(user);
     }
 
