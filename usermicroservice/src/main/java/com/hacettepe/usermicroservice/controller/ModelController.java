@@ -1,5 +1,6 @@
 package com.hacettepe.usermicroservice.controller;
 
+import com.hacettepe.usermicroservice.dto.ModelDTO;
 import com.hacettepe.usermicroservice.model.Model;
 import com.hacettepe.usermicroservice.service.IModelService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,10 @@ public class ModelController {
 //        return ResponseEntity.ok(modelService.listModels());
 //    }
 //
-//    @GetMapping("/models-by-dev")
-//    public ResponseEntity<List<Model>> getModelsByDev() {
-//        return ResponseEntity.ok(modelService.listModels());
-//    }
+    @GetMapping("/my-models")
+    public ResponseEntity<List<Model>> getModelsByDev() {
+        return ResponseEntity.ok(modelService.listModelsByDev());
+    }
 
     @GetMapping("/details")
     public ResponseEntity<Model> getModelDetails(@RequestBody Long modelId) {
@@ -32,5 +33,10 @@ public class ModelController {
     @GetMapping("/bought-models")
     public ResponseEntity<List<Model>> getBoughtModel() {
         return ResponseEntity.ok(modelService.getBoughtModels());
+    }
+
+    @PostMapping("/upload-model")
+    public ResponseEntity<Model> uploadModel(@RequestBody ModelDTO modelDto) {
+        return ResponseEntity.ok(modelService.uploadModel(modelDto));
     }
 }

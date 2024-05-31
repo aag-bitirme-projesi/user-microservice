@@ -1,6 +1,7 @@
 package com.hacettepe.usermicroservice.controller;
 
 import com.hacettepe.usermicroservice.dto.PayRequestDto;
+import com.hacettepe.usermicroservice.dto.PaymentInfoDTO;
 import com.hacettepe.usermicroservice.exception.UnableToPayException;
 import com.hacettepe.usermicroservice.model.Model;
 import com.hacettepe.usermicroservice.model.ShoppingCart;
@@ -31,14 +32,26 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getShoppingCart());
     }
 
+//    @PostMapping("/pay")
+//    public ResponseEntity<?> payForOrder() throws UnableToPayException {
+//        try {
+//            orderService.payForOrder();
+//            return ResponseEntity.ok("paid.");
+//        } catch (UnableToPayException ex) {
+//            return ResponseEntity.status(400)
+//                                 .body(ex.getMessage());
+//        }
+//    }
+
     @PostMapping("/pay")
-    public ResponseEntity<?> payForOrder() throws UnableToPayException {
+    public ResponseEntity<?> payWithCard(@RequestBody PaymentInfoDTO paymentInfo) throws UnableToPayException {
         try {
+            //orderService.payForOrder(paymentInfo);
             orderService.payForOrder();
             return ResponseEntity.ok("paid.");
         } catch (UnableToPayException ex) {
             return ResponseEntity.status(400)
-                                 .body(ex.getMessage());
+                    .body(ex.getMessage());
         }
     }
 

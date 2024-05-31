@@ -12,12 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Builder
 public class UserUpdateDTO {
+    private String name;
     private String username;
     private String email;
-    private String oldPassword;
     private String password;
     private MultipartFile cv;
     private String github;
-    private PaymentInfoDTO paymentInfo;
     private MultipartFile profilePhoto;
 }

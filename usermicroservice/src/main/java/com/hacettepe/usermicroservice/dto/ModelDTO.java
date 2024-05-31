@@ -14,5 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ModelDTO {
     private MultipartFile file;
     private String name;
-    private String username;
+    private String modelLink;
+    private double price;
+    private String description;
 }

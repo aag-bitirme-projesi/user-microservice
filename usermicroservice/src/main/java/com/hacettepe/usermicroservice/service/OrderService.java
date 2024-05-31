@@ -97,36 +97,36 @@ public class OrderService implements IOrderService{
                                                                .build();
 
         // FOR NOW TEST VERSION OF STRIPE API IS USED
-//        String token = "";
-//
-//        if (!addNewPayment) {
-//            token = paymentInfoRepository.findPaymentInfoByCardNumber(paymentInfo.getCardNumber()).getStripeToken();
-//        }
-//
-//        try {
-//            if (addNewPayment || token.isEmpty()) {
-//                StripeTokenDto tokenDto = StripeTokenDto.builder()
-//                        .cardNumber(paymentInfo.getCardNumber())
-//                        .expMonth(paymentInfo.getExpirationMonth())
-//                        .expYear(paymentInfo.getExpirationYear())
-//                        .cvc(paymentInfo.getCvc())
-//                        .build();
-//
-//                tokenDto = restTemplate.postForObject(CREATE_CARD_TOKEN_URL, tokenDto, StripeTokenDto.class);
-//
-//                if (savePayment) {
-//                    paymentInfoRepository.addStripeToken(paymentInfo.getCardNumber(), tokenDto.getToken());
-//                }
-//
-//            StripeChargeDto chargeDto = StripeChargeDto.builder()
-//                    .token(tokenDto.getToken())
-//                    .amount(amount)
-//                    .chargeId()  // what should this be??
-//                    .additionalInfo()
-//                    .build();
-//
-//            chargeDto = restTemplate.postForObject(CHARGE_URL, chargeDto, StripeChargeDto.class);
-//            }
+        /*String token = "";
+
+        if (!addNewPayment) {
+            token = paymentInfoRepository.findPaymentInfoByCardNumber(paymentInfo.getCardNumber()).getStripeToken();
+        }
+
+        try {
+            if (addNewPayment || token.isEmpty()) {
+                StripeTokenDto tokenDto = StripeTokenDto.builder()
+                        .cardNumber(paymentInfo.getCardNumber())
+                        .expMonth(paymentInfo.getExpirationMonth())
+                        .expYear(paymentInfo.getExpirationYear())
+                        .cvc(paymentInfo.getCvc())
+                        .build();
+
+                tokenDto = restTemplate.postForObject(CREATE_CARD_TOKEN_URL, tokenDto, StripeTokenDto.class);
+
+                if (savePayment) {
+                    paymentInfoRepository.addStripeToken(paymentInfo.getCardNumber(), tokenDto.getToken());
+                }
+
+            StripeChargeDto chargeDto = StripeChargeDto.builder()
+                    .token(tokenDto.getToken())
+                    .amount(amount)
+                    .chargeId()  // what should this be??
+                    .additionalInfo()
+                    .build();
+
+            chargeDto = restTemplate.postForObject(CHARGE_URL, chargeDto, StripeChargeDto.class);
+            }*/
 
             testChargeDto = restTemplate.postForObject(CHARGE_URL, testChargeDto, StripeTestChargeDto.class);
 

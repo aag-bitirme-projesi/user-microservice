@@ -14,4 +14,6 @@ public interface IShoppingCartRepository extends JpaRepository<ShoppingCart, Str
 //    @Query(value = "SELECT * FROM shopping_cart WHERE user = :username", nativeQuery = true)
 //    ShoppingCart findByUser(@Param("username") String username);
     ShoppingCart findByUser(User user);
+
+    void deleteByUser(User user);
 }

@@ -1,18 +1,19 @@
 package com.hacettepe.usermicroservice.service;
 
-import com.hacettepe.usermicroservice.model.User;
-import com.hacettepe.usermicroservice.repository.IPaymentInfoRepository;
-import com.hacettepe.usermicroservice.repository.IUserRepository;
+import com.hacettepe.usermicroservice.model.*;
+import com.hacettepe.usermicroservice.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.hacettepe.usermicroservice.dto.PaymentInfoDTO;
 import com.hacettepe.usermicroservice.dto.UserUpdateDTO;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
-import com.hacettepe.usermicroservice.model.PaymentInfo;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,13 +23,35 @@ public class UserService implements IUserService {
     private final IPaymentInfoRepository paymentInfoRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final IShoppingCartModelsRepository shoppingCartModelsRepository;
+    private final IShoppingCartRepository shoppingCartRepository;
+    private final IPaymentRepository paymentRepository;
+    private final IModelRepository modelRepository;
+    private final IDevelopersModelRepository developersModelRepository;
+
+    private String username;
+    public String getUsername() {
+        if (username == null) {
+            // Retrieve the currently authenticated principal
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                username = authentication.getName();
+            }
+        }
+        return username;
+    }
 
     @Override
     @ExceptionHandler({UserNotFoundException.class})
     public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, IOException {
-        User user = userRepository.findById(new_user.getUsername()).orElse(null);
+//        User user = userRepository.findById(new_user.getUsername()).orElse(null);
+        User user = userRepository.findByEmail(getUsername()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with username " + new_user.getUsername() + " not found");
+        }
+
+        if (new_user.getName() != null) {
+            user.setName(new_user.getName());
         }
 
         if (new_user.getEmail() != null) {
@@ -48,11 +71,6 @@ public class UserService implements IUserService {
             user.setGithub(new_user.getGithub());
         }
 
-        if (new_user.getPaymentInfo() != null) {
-            PaymentInfo newPaymentInfo = getPaymentInfo(new_user);
-            user.setPaymentInfo(newPaymentInfo);
-        }
-
         if(new_user.getProfilePhoto() != null) {
             String pp_url = s3Service.uploadProfilePhoto(user.getUsername(), new_user.getProfilePhoto());
             user.setProfilePhoto(pp_url);
@@ -61,17 +79,47 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
-        PaymentInfo newPaymentInfo = new PaymentInfo();
-        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
+//    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
+//        PaymentInfo newPaymentInfo = new PaymentInfo();
+//        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
+//
+//        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
+//        newPaymentInfo.setCvc(newPaymentInfoDTO.getCvc());
+//        newPaymentInfo.setExpirationMonth(newPaymentInfoDTO.getExpirationMonth());
+//        newPaymentInfo.setExpirationYear(newPaymentInfoDTO.getExpirationYear());
+//        newPaymentInfo.setOwner(newPaymentInfoDTO.getOwner());
+//        newPaymentInfo.setCardName(newPaymentInfoDTO.getCardName());
+//
+//        return paymentInfoRepository.save(newPaymentInfo);
+//    }
 
-        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
-        newPaymentInfo.setCvc(newPaymentInfoDTO.getCvc());
-        newPaymentInfo.setExpirationMonth(newPaymentInfoDTO.getExpirationMonth());
-        newPaymentInfo.setExpirationYear(newPaymentInfoDTO.getExpirationYear());
-        newPaymentInfo.setOwner(newPaymentInfoDTO.getOwner());
-        newPaymentInfo.setCardName(newPaymentInfoDTO.getCardName());
+    public User getProfile() {
+        String email = getUsername();
+        return userRepository.findByEmail(getUsername()).get();
+    }
 
-        return paymentInfoRepository.save(newPaymentInfo);
+    public void deleteAccount() {  //TODO bu error verebilir
+        String email = getUsername();
+        User user = userRepository.findByEmail(email).get();
+
+        ShoppingCart cart = shoppingCartRepository.findByUser(user);
+        List<Model> models = developersModelRepository.findByUser(user.getUsername());
+
+        for (Model model: models) {
+            modelRepository.deleteById(model.getId());
+        }
+
+        developersModelRepository.deleteByUser(user);
+        shoppingCartModelsRepository.deleteByShoppingCart(cart);
+        shoppingCartRepository.deleteByUser(user);
+        paymentRepository.deleteByUser(user);
+        userRepository.delete(user);
+    }
+
+    public void changePassword(String newPassword) {
+        User user = userRepository.findByEmail(getUsername()).get();
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
     }
 }

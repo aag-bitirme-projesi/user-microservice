@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 
 @Data
 @Entity
@@ -30,4 +32,9 @@ public class Model {
 
     @Column(name = "description")
     private String description;
+
+    private LocalDate createdAt;
+
+    @Column(nullable = true)
+    private boolean availability;
 }

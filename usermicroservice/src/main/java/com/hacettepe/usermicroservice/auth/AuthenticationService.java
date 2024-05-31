@@ -7,6 +7,7 @@ import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.IUserRepository;
 import com.hacettepe.usermicroservice.utils.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,7 +46,8 @@ public class AuthenticationService {
         userRepository.save(user);
 
         var jwtToken = jwtService.generateToken(user);
-
+        log.info("HEREBACKEND6666");
+        log.info(String.valueOf(jwtToken));
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
@@ -62,7 +65,8 @@ public class AuthenticationService {
                 .orElseThrow(); //todo handle the exception
 
         var jwtToken = jwtService.generateToken(user);
-
+        log.info("HEREBACKEND6666");
+        log.info(String.valueOf(jwtToken));
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

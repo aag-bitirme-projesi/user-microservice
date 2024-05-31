@@ -16,7 +16,7 @@ public class AuthenticationController {
 
     private final AuthenticationService authService;
 
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequest request)  {
         try {
             return ResponseEntity.ok(authService.signUp(request));
@@ -27,7 +27,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/signin")
     public ResponseEntity<AuthenticationResponse> signIn(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authService.signIn(request));
     }

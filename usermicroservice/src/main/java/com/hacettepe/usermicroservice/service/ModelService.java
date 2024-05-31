@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -47,11 +48,30 @@ public class ModelService implements IModelService {
         return modelRepository.findAll();
     }
 
+    public List<Model> listModelsByDev() {
+        User user = userRepository.findByEmail(getUsername()).get();
+        return developersModelRepository.findByUser(user.getUsername());
+    }
+
     public Model getModelById(long modelId) {
         return modelRepository.findById(modelId).get();
     }
 
     public List<Model> getBoughtModels() {
-        return modelRepository.findBoughtModels(getUsername());
+        User user = userRepository.findByEmail(getUsername()).get();
+        return modelRepository.findBoughtModels(user);
+    }
+
+    public Model uploadModel(ModelDTO modelDto) {
+        Model newModel = Model.builder()
+                .name(modelDto.getName())
+                .modelLink(modelDto.getModelLink())  //TODO bunu modelDto dan almayıp ataberkin fonkunu çağır
+                .price(modelDto.getPrice())
+                .description(modelDto.getDescription())
+                .createdAt(LocalDate.now())
+                .availability(false)
+                .build();
+
+        return modelRepository.save(newModel);
     }
 }

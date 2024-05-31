@@ -6,16 +6,21 @@ import com.hacettepe.usermicroservice.model.PasswordResetToken;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.repository.IPasswordResetTokenRepository;
 import com.hacettepe.usermicroservice.repository.IUserRepository;
+import com.hacettepe.usermicroservice.utils.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PasswordResetTokenService implements IPasswordResetTokenService {
 
     private final IUserRepository userRepository;
@@ -25,7 +30,9 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
     private final PasswordEncoder passwordEncoder;
 
     public String createToken(String email) throws UserNotFoundException, EmailSendingException {
-
+        log.info("here1");
+        email = email.replace("\"", "");
+        log.info(email);
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with email " + email + " not found");
@@ -52,9 +59,10 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
     }
 
     private void sendPasswordResetEmail(User user, String token) throws EmailSendingException {
+        log.info("here2");
         String userEmail = user.getEmail();
         String subject = "Password Reset Request";
-        String resetLink = "http://localhost:8080/api/user/reset-password/" + token;
+        String resetLink = "http://localhost:3000/resetPassword/" + token;
         String emailText = "Dear " + user.getName() + ",\n\n"
                 + "Please click below link to reset your password.\n"
                 + resetLink + "\n\n"
@@ -64,6 +72,7 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
     }
 
     public void resetPassword(String token, String newPassword) {
+        log.info("here3");
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElse(null);
         if (passwordResetToken == null)
             return;
@@ -76,6 +85,7 @@ public class PasswordResetTokenService implements IPasswordResetTokenService {
     }
 
     public boolean validatePasswordResetToken(String token) {
+        log.info("here4");
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElse(null);
         if (passwordResetToken == null)
             return false;

@@ -2,6 +2,7 @@ package com.hacettepe.usermicroservice.controller;
 
 import com.hacettepe.usermicroservice.dto.UserUpdateDTO;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
+import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @RestController
 //@Secured(SecurityUtils.ROLE_USER)
-@RequestMapping("user/user")
+@RequestMapping("/user/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,6 +32,12 @@ public class UserController {
         return ResponseEntity.ok("secured endpoint home");
     }
 
+    //TODO profil bilgilerini gönder
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile() {
+        return ResponseEntity.ok(userService.getProfile());
+    }
+
     @PostMapping("/update-user")
     public ResponseEntity<?> updateUser(@ModelAttribute UserUpdateDTO userUpdateDTO) {
         try {
@@ -39,9 +46,18 @@ public class UserController {
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body("User not found.");
         } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Error during cv upload.");
+            return ResponseEntity.badRequest().body("Error during file upload.");
         }
+    }
 
+    @GetMapping("/get-user")
+    public ResponseEntity<?> getUserInfo(@RequestBody String email) {
+        try {
+            UserInfoDto userInfoDto = userService.getUser(email);
+            return ResponseEntity.ok(userInfoDto);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
     }
 
     @PostMapping("/forget-password")
@@ -57,11 +73,23 @@ public class UserController {
     }
 
     @PostMapping("/reset-password/{token}")
-    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody Map<String, String> passwordMap) {
+    public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestBody String newPassword) {
         if (!passwordResetTokenService.validatePasswordResetToken(token))
             return ResponseEntity.badRequest().body("Token is invalid.");
 
-        passwordResetTokenService.resetPassword(token, passwordMap.get("password"));
+        passwordResetTokenService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Password reset successfully");
+    }
+
+    //TODO delete account
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount() {
+        userService.deleteAccount();
+        return ResponseEntity.ok("deleted account");
+    }
+
+    public ResponseEntity<?> changePassword(@RequestBody String newPassword) {
+        userService.changePassword(newPassword);
+        return ResponseEntity.ok("Password changed.");
     }
 }

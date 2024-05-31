@@ -17,4 +17,7 @@ public interface IModelService {
 
     List<Model> getBoughtModels();
 
+    Model uploadModel(ModelDTO modelDto);
+
+    public List<Model> listModelsByDev();
 }
