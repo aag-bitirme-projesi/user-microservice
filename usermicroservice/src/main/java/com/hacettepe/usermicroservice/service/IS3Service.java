@@ -13,8 +13,8 @@ public interface IS3Service {
     public void uploadCV(String keyname, MultipartFile file) throws IOException;
 
     public  String getCV(String keyname);
-
-    public String uploadModel(String keyname, MultipartFile file) throws IOException;
+//
+//    public String uploadModel(String keyname, MultipartFile file) throws IOException;
 
     public void deleteModel(String keyname);
 

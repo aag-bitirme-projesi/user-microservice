@@ -61,7 +61,7 @@ public class UserService implements IUserService {
                 .profilePicture(s3Service.getProfilePicture(username))
                 .cv(s3Service.getCV(username))
                 .github(user.getGithub())
-                .paymentInfo(getPaymentInfoDto(user))
+//                .paymentInfo(getPaymentInfoDto(user))
                 .build();
     }
 
@@ -99,40 +99,40 @@ public class UserService implements IUserService {
             user.setGithub(new_user.getGithub());
         }
 
-        if (new_user.getPaymentInfo() != null) {
-            PaymentInfo newPaymentInfo = getPaymentInfo(new_user);
-            user.setPaymentInfo(newPaymentInfo);
-        }
+//        if (new_user.getPaymentInfo() != null) {
+//            PaymentInfo newPaymentInfo = getPaymentInfo(new_user);
+//            user.setPaymentInfo(newPaymentInfo);
+//        }
 
         return userRepository.save(user);
     }
-
-    private PaymentInfoDTO getPaymentInfoDto(User user) {
-        PaymentInfo paymentInfo = user.getPaymentInfo();
-
-        return PaymentInfoDTO.builder()
-                .cardNumber(paymentInfo.getCardNumber())
-                .cvc(paymentInfo.getCvc())
-                .expirationMonth(paymentInfo.getExpirationMonth())
-                .expirationYear(paymentInfo.getExpirationYear())
-                .owner(paymentInfo.getOwner())
-                .cardName(paymentInfo.getCardName())
-                .build();
-    }
-
-    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
-        PaymentInfo newPaymentInfo = new PaymentInfo();
-        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
-
-        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
-        newPaymentInfo.setCvc(newPaymentInfoDTO.getCvc());
-        newPaymentInfo.setExpirationMonth(newPaymentInfoDTO.getExpirationMonth());
-        newPaymentInfo.setExpirationYear(newPaymentInfoDTO.getExpirationYear());
-        newPaymentInfo.setOwner(newPaymentInfoDTO.getOwner());
-        newPaymentInfo.setCardName(newPaymentInfoDTO.getCardName());
-
-        return paymentInfoRepository.save(newPaymentInfo);
-    }
+//
+//    private PaymentInfoDTO getPaymentInfoDto(User user) {
+//        PaymentInfo paymentInfo = user.getPaymentInfo();
+//
+//        return PaymentInfoDTO.builder()
+//                .cardNumber(paymentInfo.getCardNumber())
+//                .cvc(paymentInfo.getCvc())
+//                .expirationMonth(paymentInfo.getExpirationMonth())
+//                .expirationYear(paymentInfo.getExpirationYear())
+//                .owner(paymentInfo.getOwner())
+//                .cardName(paymentInfo.getCardName())
+//                .build();
+//    }
+//
+//    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
+//        PaymentInfo newPaymentInfo = new PaymentInfo();
+//        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
+//
+//        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
+//        newPaymentInfo.setCvc(newPaymentInfoDTO.getCvc());
+//        newPaymentInfo.setExpirationMonth(newPaymentInfoDTO.getExpirationMonth());
+//        newPaymentInfo.setExpirationYear(newPaymentInfoDTO.getExpirationYear());
+//        newPaymentInfo.setOwner(newPaymentInfoDTO.getOwner());
+//        newPaymentInfo.setCardName(newPaymentInfoDTO.getCardName());
+//
+//        return paymentInfoRepository.save(newPaymentInfo);
+//    }
 
     public User getProfile() {
         String email = getUsername();
