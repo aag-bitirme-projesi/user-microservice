@@ -1,6 +1,5 @@
 package com.hacettepe.usermicroservice.dto;
 
-import com.hacettepe.usermicroservice.model.PaymentInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,13 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateDTO {
-    private String name;
+public class UserInfoDto {
     private String username;
     private String email;
-    private String password;
-    private MultipartFile profilePicture;
-    private MultipartFile cv;
+    private String profilePicture;
+    private String cv;
     private String github;
-    private MultipartFile profilePhoto;
+    private PaymentInfoDTO paymentInfo;
 }

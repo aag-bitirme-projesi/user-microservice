@@ -1,6 +1,9 @@
 package com.hacettepe.usermicroservice.controller;
 
+import com.hacettepe.usermicroservice.dto.PasswordResetDto;
+import com.hacettepe.usermicroservice.dto.UserInfoDto;
 import com.hacettepe.usermicroservice.dto.UserUpdateDTO;
+import com.hacettepe.usermicroservice.exception.PasswordMatchException;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
 import com.hacettepe.usermicroservice.model.User;
 import com.hacettepe.usermicroservice.service.UserService;
@@ -32,10 +35,14 @@ public class UserController {
         return ResponseEntity.ok("secured endpoint home");
     }
 
-    //TODO profil bilgilerini gönder
-    @GetMapping("/profile")
-    public ResponseEntity<User> getProfile() {
-        return ResponseEntity.ok(userService.getProfile());
+    @GetMapping("/get-user")
+    public ResponseEntity<?> getUserInfo(@RequestBody String email) {
+        try {
+            UserInfoDto userInfoDto = userService.getUser(email);
+            return ResponseEntity.ok(userInfoDto);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
     }
 
     @PostMapping("/update-user")
@@ -45,18 +52,10 @@ public class UserController {
             return ResponseEntity.ok("Update Sent Successfully");
         } catch (UserNotFoundException e) {
             return ResponseEntity.badRequest().body("User not found.");
+        } catch (PasswordMatchException e) {
+            return ResponseEntity.badRequest().body("Old password does not match.");
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Error during file upload.");
-        }
-    }
-
-    @GetMapping("/get-user")
-    public ResponseEntity<?> getUserInfo(@RequestBody String email) {
-        try {
-            UserInfoDto userInfoDto = userService.getUser(email);
-            return ResponseEntity.ok(userInfoDto);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.badRequest().body("User not found.");
         }
     }
 

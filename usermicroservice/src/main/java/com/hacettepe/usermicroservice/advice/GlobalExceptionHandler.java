@@ -45,4 +45,10 @@ public class GlobalExceptionHandler
         String errorMessage = ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PasswordMatchException.class)
+    public ResponseEntity<String> handleQueryOutOfRangeException(PasswordMatchException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
 }

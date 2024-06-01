@@ -15,15 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Date;
 
 @Service
 public class S3Service implements IS3Service {
 
     private final AmazonS3 s3Client;
     private static final String CV_BUCKET_NAME = "user-cv-storage";
+    private static final String PROFILE_PICTURE_BUCKET_NAME = "user-pp-storage";
     private static final String MODEL_BUCKET_NAME = "model-storage";
-
-    private static final String PROFILE_PHOTO_BUCKET_NAME = "profile-photo-storage";
 
     public S3Service(@Value("${aws.access.key}") String accessKey,
                      @Value("${aws.secret.key}") String secretKey,
@@ -35,7 +35,31 @@ public class S3Service implements IS3Service {
                 .build();
     }
 
-    public String uploadCV(String keyname, MultipartFile file) throws IOException {
+    @Override
+    public void uploadProfilePicture(String keyname, MultipartFile file) throws IOException{
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getInputStream().available());
+        metadata.setContentType(file.getContentType());
+        metadata.addUserMetadata("filename", file.getOriginalFilename());
+
+        this.s3Client.putObject(PROFILE_PICTURE_BUCKET_NAME, keyname, file.getInputStream(), metadata);
+    }
+
+    @Override
+    public String getProfilePicture(String keyname) {
+        Date expirationDate = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(PROFILE_PICTURE_BUCKET_NAME, keyname)
+                        .withExpiration(expirationDate)
+                        .withMethod(HttpMethod.GET);
+
+        URL url = this.s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+        return url.toString();
+    }
+
+    @Override
+    public void uploadCV(String keyname, MultipartFile file) throws IOException {
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getInputStream().available());
@@ -43,48 +67,18 @@ public class S3Service implements IS3Service {
         metadata.addUserMetadata("filename", file.getOriginalFilename());
 
         this.s3Client.putObject(CV_BUCKET_NAME, keyname, file.getInputStream(), metadata);
+    }
+
+    @Override
+    public String getCV(String keyname) {
+        Date expirationDate = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(CV_BUCKET_NAME, keyname)
+                        .withExpiration(expirationDate)
                         .withMethod(HttpMethod.GET);
 
         URL url = this.s3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
-        return url.toString();
-    }
-
-    public String uploadProfilePhoto(String keyname, MultipartFile file) throws IOException{
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getInputStream().available());
-        metadata.setContentType(file.getContentType());
-        metadata.addUserMetadata("filename", file.getOriginalFilename());
-
-        this.s3Client.putObject(PROFILE_PHOTO_BUCKET_NAME, keyname, file.getInputStream(), metadata);
-
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(PROFILE_PHOTO_BUCKET_NAME, keyname)
-                        .withMethod(HttpMethod.GET);
-
-        URL url = this.s3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
-        return url.toString();
-    }
-
-    public String uploadModel(String keyname, MultipartFile file) throws IOException {
-
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getInputStream().available());
-        metadata.setContentType(file.getContentType());
-        metadata.addUserMetadata("filename", file.getOriginalFilename());
-
-        this.s3Client.putObject(MODEL_BUCKET_NAME, keyname, file.getInputStream(), metadata);
-
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(MODEL_BUCKET_NAME, keyname)
-                        .withMethod(HttpMethod.GET);
-
-        URL url = this.s3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
         return url.toString();
     }
 

@@ -6,9 +6,13 @@ import java.io.IOException;
 
 public interface IS3Service {
 
-    public String uploadCV(String keyname, MultipartFile file) throws IOException;
+    public void uploadProfilePicture(String keyname, MultipartFile file) throws IOException;
 
-    String uploadProfilePhoto(String keyname, MultipartFile file) throws IOException;
+    public String getProfilePicture(String keyname);
+
+    public void uploadCV(String keyname, MultipartFile file) throws IOException;
+
+    public  String getCV(String keyname);
 
     public String uploadModel(String keyname, MultipartFile file) throws IOException;
 

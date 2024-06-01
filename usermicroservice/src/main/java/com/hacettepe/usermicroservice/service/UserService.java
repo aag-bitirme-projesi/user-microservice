@@ -2,6 +2,11 @@ package com.hacettepe.usermicroservice.service;
 
 import com.hacettepe.usermicroservice.model.*;
 import com.hacettepe.usermicroservice.repository.*;
+import com.hacettepe.usermicroservice.dto.UserInfoDto;
+import com.hacettepe.usermicroservice.exception.PasswordMatchException;
+import com.hacettepe.usermicroservice.model.User;
+import com.hacettepe.usermicroservice.repository.IPaymentInfoRepository;
+import com.hacettepe.usermicroservice.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,8 +48,26 @@ public class UserService implements IUserService {
 
     @Override
     @ExceptionHandler({UserNotFoundException.class})
-    public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, IOException {
-//        User user = userRepository.findById(new_user.getUsername()).orElse(null);
+    public UserInfoDto getUser(String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException("User with email " + email + " not found");
+        }
+
+        String username = user.getUsername();
+        return UserInfoDto.builder()
+                .username(username)
+                .email(user.getEmail())
+                .profilePicture(s3Service.getProfilePicture(username))
+                .cv(s3Service.getCV(username))
+                .github(user.getGithub())
+                .paymentInfo(getPaymentInfoDto(user))
+                .build();
+    }
+
+    @Override
+    @ExceptionHandler({UserNotFoundException.class})
+    public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, PasswordMatchException, IOException {
         User user = userRepository.findByEmail(getUsername()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with username " + new_user.getUsername() + " not found");
@@ -59,39 +82,57 @@ public class UserService implements IUserService {
         }
 
         if (new_user.getPassword() != null) {
+            if (!passwordEncoder.matches(new_user.getOldPassword(), user.getPassword()))
+                throw new PasswordMatchException("Old password doesn't match");
             user.setPassword(passwordEncoder.encode(new_user.getPassword()));
         }
 
+        if (new_user.getProfilePicture() != null) {
+            s3Service.uploadProfilePicture(user.getUsername(), new_user.getProfilePicture());
+        }
+
         if (new_user.getCv() != null) {
-            String cv_url = s3Service.uploadCV(user.getUsername(), new_user.getCv());
-            user.setCv(cv_url);
+            s3Service.uploadCV(user.getUsername(), new_user.getCv());
         }
 
         if (new_user.getGithub() != null) {
             user.setGithub(new_user.getGithub());
         }
 
-        if(new_user.getProfilePhoto() != null) {
-            String pp_url = s3Service.uploadProfilePhoto(user.getUsername(), new_user.getProfilePhoto());
-            user.setProfilePhoto(pp_url);
+        if (new_user.getPaymentInfo() != null) {
+            PaymentInfo newPaymentInfo = getPaymentInfo(new_user);
+            user.setPaymentInfo(newPaymentInfo);
         }
 
         return userRepository.save(user);
     }
 
-//    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
-//        PaymentInfo newPaymentInfo = new PaymentInfo();
-//        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
-//
-//        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
-//        newPaymentInfo.setCvc(newPaymentInfoDTO.getCvc());
-//        newPaymentInfo.setExpirationMonth(newPaymentInfoDTO.getExpirationMonth());
-//        newPaymentInfo.setExpirationYear(newPaymentInfoDTO.getExpirationYear());
-//        newPaymentInfo.setOwner(newPaymentInfoDTO.getOwner());
-//        newPaymentInfo.setCardName(newPaymentInfoDTO.getCardName());
-//
-//        return paymentInfoRepository.save(newPaymentInfo);
-//    }
+    private PaymentInfoDTO getPaymentInfoDto(User user) {
+        PaymentInfo paymentInfo = user.getPaymentInfo();
+
+        return PaymentInfoDTO.builder()
+                .cardNumber(paymentInfo.getCardNumber())
+                .cvc(paymentInfo.getCvc())
+                .expirationMonth(paymentInfo.getExpirationMonth())
+                .expirationYear(paymentInfo.getExpirationYear())
+                .owner(paymentInfo.getOwner())
+                .cardName(paymentInfo.getCardName())
+                .build();
+    }
+
+    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
+        PaymentInfo newPaymentInfo = new PaymentInfo();
+        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
+
+        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
+        newPaymentInfo.setCvc(newPaymentInfoDTO.getCvc());
+        newPaymentInfo.setExpirationMonth(newPaymentInfoDTO.getExpirationMonth());
+        newPaymentInfo.setExpirationYear(newPaymentInfoDTO.getExpirationYear());
+        newPaymentInfo.setOwner(newPaymentInfoDTO.getOwner());
+        newPaymentInfo.setCardName(newPaymentInfoDTO.getCardName());
+
+        return paymentInfoRepository.save(newPaymentInfo);
+    }
 
     public User getProfile() {
         String email = getUsername();
