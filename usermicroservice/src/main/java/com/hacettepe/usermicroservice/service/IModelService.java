@@ -1,6 +1,7 @@
 package com.hacettepe.usermicroservice.service;
 
 import com.hacettepe.usermicroservice.dto.ModelDTO;
+import com.hacettepe.usermicroservice.dto.ModelQueryDto;
 import com.hacettepe.usermicroservice.exception.ModelNotFoundException;
 import com.hacettepe.usermicroservice.exception.SomethingWentWrongException;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;

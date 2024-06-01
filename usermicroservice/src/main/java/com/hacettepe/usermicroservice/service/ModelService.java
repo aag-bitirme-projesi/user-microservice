@@ -1,6 +1,7 @@
 package com.hacettepe.usermicroservice.service;
 
 import com.hacettepe.usermicroservice.dto.ModelDTO;
+import com.hacettepe.usermicroservice.dto.ModelQueryDto;
 import com.hacettepe.usermicroservice.exception.ModelNotFoundException;
 import com.hacettepe.usermicroservice.exception.SomethingWentWrongException;
 import com.hacettepe.usermicroservice.exception.UserNotFoundException;
@@ -11,6 +12,7 @@ import com.hacettepe.usermicroservice.repository.IDevelopersModelRepository;
 import com.hacettepe.usermicroservice.repository.IModelRepository;
 import com.hacettepe.usermicroservice.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ModelService implements IModelService {
 
     private final IUserRepository userRepository;
@@ -50,7 +54,15 @@ public class ModelService implements IModelService {
 
     public List<Model> listModelsByDev() {
         User user = userRepository.findByEmail(getUsername()).get();
-        return developersModelRepository.findByUser(user.getUsername());
+        var y = user.getUsername();
+        var x = developersModelRepository.findByUser(user.getUsername());
+        List<Model> result = new ArrayList<>();
+
+        for (DevelopersModel developersModel : x) {
+            result.add(developersModel.getModel());
+        }
+
+        return result;
     }
 
     public Model getModelById(long modelId) {

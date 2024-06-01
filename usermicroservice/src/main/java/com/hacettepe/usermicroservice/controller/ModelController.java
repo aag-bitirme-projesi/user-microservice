@@ -1,6 +1,7 @@
 package com.hacettepe.usermicroservice.controller;
 
 import com.hacettepe.usermicroservice.dto.ModelDTO;
+import com.hacettepe.usermicroservice.dto.ModelQueryDto;
 import com.hacettepe.usermicroservice.model.Model;
 import com.hacettepe.usermicroservice.service.IModelService;
 import lombok.RequiredArgsConstructor;

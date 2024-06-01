@@ -22,7 +22,7 @@ public class DevelopersModel {
     @JoinColumn(name = "developer")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "model")
     private Model model;
 }

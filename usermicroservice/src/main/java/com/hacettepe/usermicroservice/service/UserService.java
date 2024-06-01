@@ -1,5 +1,6 @@
 package com.hacettepe.usermicroservice.service;
 
+import com.hacettepe.usermicroservice.dto.ModelQueryDto;
 import com.hacettepe.usermicroservice.model.*;
 import com.hacettepe.usermicroservice.repository.*;
 import com.hacettepe.usermicroservice.dto.UserInfoDto;
@@ -144,10 +145,10 @@ public class UserService implements IUserService {
         User user = userRepository.findByEmail(email).get();
 
         ShoppingCart cart = shoppingCartRepository.findByUser(user);
-        List<Model> models = developersModelRepository.findByUser(user.getUsername());
+        List<DevelopersModel> models = developersModelRepository.findByUser(user.getUsername());
 
-        for (Model model: models) {
-            modelRepository.deleteById(model.getId());
+        for (DevelopersModel model: models) {
+            modelRepository.deleteById(model.getModel().getId());
         }
 
         developersModelRepository.deleteByUser(user);

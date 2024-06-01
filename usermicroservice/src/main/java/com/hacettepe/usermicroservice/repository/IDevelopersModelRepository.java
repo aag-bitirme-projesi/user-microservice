@@ -1,5 +1,6 @@
 package com.hacettepe.usermicroservice.repository;
 
+import com.hacettepe.usermicroservice.dto.ModelQueryDto;
 import com.hacettepe.usermicroservice.model.DevelopersModel;
 import com.hacettepe.usermicroservice.model.Model;
 import com.hacettepe.usermicroservice.model.User;
@@ -11,8 +12,8 @@ import java.util.Optional;
 
 public interface IDevelopersModelRepository extends JpaRepository<DevelopersModel, Long> {
 
-    @Query(value = "SELECT model FROM developers_models WHERE user = :username", nativeQuery = true)
-    List<Model> findByUser(String username);
+    @Query(value = "SELECT * FROM developers_models WHERE developer = :username", nativeQuery = true)
+    List<DevelopersModel> findByUser(String username);
 
     void deleteByUser(User user);
 }
