@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("user/model")
+@RequestMapping("/user/model")
 @RequiredArgsConstructor
 public class ModelController {
     private final IModelService modelService;
 
-//    @GetMapping("/all")
-//    public ResponseEntity<List<Model>> getModels() {
-//        return ResponseEntity.ok(modelService.listModels());
-//    }
-//
+    @GetMapping("/all")
+    public ResponseEntity<List<Model>> getModels() {
+        return ResponseEntity.ok(modelService.listModels());
+    }
+
     @GetMapping("/my-models")
     public ResponseEntity<List<Model>> getModelsByDev() {
         return ResponseEntity.ok(modelService.listModelsByDev());
@@ -38,5 +38,11 @@ public class ModelController {
     @PostMapping("/upload-model")
     public ResponseEntity<Model> uploadModel(@RequestBody ModelDTO modelDto) {
         return ResponseEntity.ok(modelService.uploadModel(modelDto));
+    }
+
+    @PutMapping("/delete-ids")
+    public ResponseEntity<String> deleteIds(@RequestBody List<Long> ids) {
+        modelService.deleteIds(ids);
+        return ResponseEntity.ok("deleted ids");
     }
 }

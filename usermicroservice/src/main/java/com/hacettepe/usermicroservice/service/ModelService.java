@@ -59,7 +59,7 @@ public class ModelService implements IModelService {
 
     public List<Model> getBoughtModels() {
         User user = userRepository.findByEmail(getUsername()).get();
-        return modelRepository.findBoughtModels(user);
+        return modelRepository.findBoughtModels(user.getUsername());
     }
 
     public Model uploadModel(ModelDTO modelDto) {
@@ -73,5 +73,14 @@ public class ModelService implements IModelService {
                 .build();
 
         return modelRepository.save(newModel);
+    }
+
+    public void deleteIds(List<Long> ids) {
+        List<Model> models = modelRepository.findAllById(ids);
+
+        for (Model model : models) {
+            model.setAvailability(false);
+            modelRepository.save(model);
+        }
     }
 }

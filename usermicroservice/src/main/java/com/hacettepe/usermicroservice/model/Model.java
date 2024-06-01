@@ -35,6 +35,6 @@ public class Model {
 
     private LocalDate createdAt;
 
-    @Column(nullable = true)
-    private boolean availability;
+    @Column()
+    private boolean availability = true;
 }

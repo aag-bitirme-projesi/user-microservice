@@ -19,8 +19,11 @@ public interface IModelRepository extends JpaRepository<Model, Long> {
     @Query(value = "SELECT m.* FROM models m INNER JOIN shopping_cart_models scm ON m.id = scm.model_id WHERE scm.shopping_cart_id = :cartId", nativeQuery = true)
     List<Model> findModelsByCartId(@Param("cartId") long cartId);
 
-    @Query(value = "SELECT m.* FROM models m INNER JOIN orders o WHERE o.model_id = m.id and o._user = :user", nativeQuery = true)
-    List<Model> findBoughtModels(User user);
+    @Query(value = "SELECT m.* FROM models m INNER JOIN orders o WHERE o.model_id = m.id and o._user = :username", nativeQuery = true)
+    List<Model> findBoughtModels(String username);
 
     void deleteById(long id);
+
+    void deleteByIdIn(List<Long> ids);
+
 }

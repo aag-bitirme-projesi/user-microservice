@@ -19,5 +19,7 @@ public interface IModelService {
 
     Model uploadModel(ModelDTO modelDto);
 
-    public List<Model> listModelsByDev();
+    List<Model> listModelsByDev();
+
+    void deleteIds(List<Long> ids);
 }
