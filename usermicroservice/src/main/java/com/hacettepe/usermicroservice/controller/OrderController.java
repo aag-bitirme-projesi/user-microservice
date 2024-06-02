@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 //@Secured(SecurityUtils.ROLE_USER)
-@RequestMapping("user/order")
+@RequestMapping("/user/order")
 @RequiredArgsConstructor
 public class OrderController {
     @Autowired
@@ -30,6 +30,12 @@ public class OrderController {
     @GetMapping("/get-cart")
     public ResponseEntity<List<Model>> getShoppingCart() {
         return ResponseEntity.ok(orderService.getShoppingCart());
+    }
+
+    @DeleteMapping("/remove-from-cart/{modelId}")
+    public ResponseEntity<String> deleteFromShoppingCart(@PathVariable Long modelId) {
+        orderService.deleteFromShoppingCart(modelId);
+        return ResponseEntity.ok("item removed.");
     }
 
 //    @PostMapping("/pay")

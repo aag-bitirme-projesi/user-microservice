@@ -11,6 +11,8 @@ import java.util.List;
 public interface IOrderService {
     void addToShoppingCart(long modelId);
     List<Model> getShoppingCart();
+
+    void deleteFromShoppingCart(long modelId);
     double getTotalAmount(List<Model> modelsList);
     void payForOrder() throws UnableToPayException; //boolean addNewPayment, PaymentInfoDTO paymentInfo, boolean savePayment) throws UnableToPayException;
     List<?> getPastOrders();

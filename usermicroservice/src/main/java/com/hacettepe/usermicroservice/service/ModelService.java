@@ -53,7 +53,7 @@ public class ModelService implements IModelService {
     }
 
     public List<Model> listModelsByDev() {
-        User user = userRepository.findByEmail(getUsername()).get();
+        User user = userRepository.findById(getUsername()).get();
         var y = user.getUsername();
         var x = developersModelRepository.findByUser(user.getUsername());
         List<Model> result = new ArrayList<>();
@@ -70,7 +70,7 @@ public class ModelService implements IModelService {
     }
 
     public List<Model> getBoughtModels() {
-        User user = userRepository.findByEmail(getUsername()).get();
+        User user = userRepository.findById(getUsername()).get();
         return modelRepository.findBoughtModels(user.getUsername());
     }
 

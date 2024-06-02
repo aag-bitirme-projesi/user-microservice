@@ -48,7 +48,7 @@ public class OrderService implements IOrderService{
     }
 
     public void addToShoppingCart(long modelId) {
-        User user = userRepository.findByEmail(getUsername()).get();
+        User user = userRepository.findById(getUsername()).get();
         var shoppingCartExists = shoppingCartRepository.findByUser(user) ;
         ShoppingCart shoppingCart;
 
@@ -74,9 +74,17 @@ public class OrderService implements IOrderService{
     }
 
     public List<Model> getShoppingCart() {
-        User user = userRepository.findByEmail(getUsername()).get();
+        User user = userRepository.findById(getUsername()).get();
         var shoppingCart = shoppingCartRepository.findByUser(user);
         return modelRepository.findModelsByCartId(shoppingCart.getId());
+    }
+
+    @Transactional
+    public void deleteFromShoppingCart(long modelId) {
+        User user = userRepository.findById(getUsername()).get();
+        var shoppingCart = shoppingCartRepository.findByUser(user);
+        Model model = modelRepository.findById(modelId).get();
+        shoppingCartModelsRepository.deleteByModelAndShoppingCart(model, shoppingCart);
     }
 
     public double getTotalAmount(List<Model> modelsList) {
@@ -157,7 +165,7 @@ public class OrderService implements IOrderService{
     }
 
     public List<Order> getPastOrders() {
-        var user = userRepository.findByEmail(getUsername()).get();
+        var user = userRepository.findById(getUsername()).get();
         return orderRepository.findAllByUser(user);
     }
 }

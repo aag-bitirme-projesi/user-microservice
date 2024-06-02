@@ -16,4 +16,6 @@ public interface IShoppingCartModelsRepository extends JpaRepository<ShoppingCar
 
     @Query(value = "SELECT model_id FROM shopping_cart_models WHERE shopping_cart_id = :cartId", nativeQuery = true)
     List<Long> getModels(long cartId);
+
+    void deleteByModelAndShoppingCart(Model model, ShoppingCart cart);
 }

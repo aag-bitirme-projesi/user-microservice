@@ -69,7 +69,7 @@ public class UserService implements IUserService {
     @Override
     @ExceptionHandler({UserNotFoundException.class})
     public User updateUser(UserUpdateDTO new_user) throws UserNotFoundException, PasswordMatchException, IOException {
-        User user = userRepository.findByEmail(getUsername()).orElse(null);
+        User user = userRepository.findById(getUsername()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException("User with username " + new_user.getUsername() + " not found");
         }
@@ -136,16 +136,15 @@ public class UserService implements IUserService {
 //    }
 
     public User getProfile() {
-        String email = getUsername();
-        return userRepository.findByEmail(getUsername()).get();
+        return userRepository.findById(getUsername()).get();
     }
 
     public void deleteAccount() {  //TODO bu error verebilir
-        String email = getUsername();
-        User user = userRepository.findByEmail(email).get();
+        String username = getUsername();
+        User user = userRepository.findById(username).get();
 
         ShoppingCart cart = shoppingCartRepository.findByUser(user);
-        List<DevelopersModel> models = developersModelRepository.findByUser(user.getUsername());
+        List<DevelopersModel> models = developersModelRepository.findByUser(username);
 
         for (DevelopersModel model: models) {
             modelRepository.deleteById(model.getModel().getId());
@@ -159,7 +158,7 @@ public class UserService implements IUserService {
     }
 
     public void changePassword(String newPassword) {
-        User user = userRepository.findByEmail(getUsername()).get();
+        User user = userRepository.findById(getUsername()).get();
         user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(user);

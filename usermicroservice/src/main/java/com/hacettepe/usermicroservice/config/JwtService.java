@@ -1,5 +1,6 @@
 package com.hacettepe.usermicroservice.config;
 
+import com.hacettepe.usermicroservice.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,8 +20,12 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "f36118b1559e9e82573da2630063ec27ebc871c7234aee0bcc6f17cbce2ec3d2";
-    public String extractEmail(String token) {
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -33,6 +38,9 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        extraClaims.put("email", ((User) userDetails).getEmail()); // Add email to the claims
+        extraClaims.put("username", userDetails.getUsername()); // Add username to the claims
+
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
@@ -43,9 +51,9 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String email = extractEmail(token);
+        final String username = extractUsername(token);
 
-        return (email.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
