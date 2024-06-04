@@ -57,6 +57,7 @@ public class UserService implements IUserService {
 
         String username = user.getUsername();
         return UserInfoDto.builder()
+                .name(user.getName())
                 .username(username)
                 .email(user.getEmail())
                 .profilePicture(s3Service.getProfilePicture(username))
@@ -83,8 +84,6 @@ public class UserService implements IUserService {
         }
 
         if (new_user.getPassword() != null) {
-            if (!passwordEncoder.matches(new_user.getOldPassword(), user.getPassword()))
-                throw new PasswordMatchException("Old password doesn't match");
             user.setPassword(passwordEncoder.encode(new_user.getPassword()));
         }
 
@@ -99,11 +98,6 @@ public class UserService implements IUserService {
         if (new_user.getGithub() != null) {
             user.setGithub(new_user.getGithub());
         }
-
-//        if (new_user.getPaymentInfo() != null) {
-//            PaymentInfo newPaymentInfo = getPaymentInfo(new_user);
-//            user.setPaymentInfo(newPaymentInfo);
-//        }
 
         return userRepository.save(user);
     }

@@ -18,7 +18,7 @@ public class DevelopersModel {
     @Column(name = "id")
     private long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "developer")
     private User user;
 

@@ -35,8 +35,8 @@ public class UserController {
         return ResponseEntity.ok("secured endpoint home");
     }
 
-    @GetMapping("/get-user")
-    public ResponseEntity<?> getUserInfo(@RequestBody String email) {
+    @GetMapping("/get-user/{email}")
+    public ResponseEntity<?> getUserInfo(@PathVariable String email) {
         try {
             UserInfoDto userInfoDto = userService.getUser(email);
             return ResponseEntity.ok(userInfoDto);
