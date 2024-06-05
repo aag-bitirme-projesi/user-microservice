@@ -116,7 +116,7 @@ public class UserService implements IUserService {
 //    }
 //
 //    private PaymentInfo getPaymentInfo(UserUpdateDTO new_user) {
-//        PaymentInfo newPaymentInfo = new PaymentInfo();
+//        PaymentInfo newPayment  Info = new PaymentInfo();
 //        PaymentInfoDTO newPaymentInfoDTO = new_user.getPaymentInfo();
 //
 //        newPaymentInfo.setCardNumber(newPaymentInfoDTO.getCardNumber());
